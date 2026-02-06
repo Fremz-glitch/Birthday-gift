@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Year Older, A Year More Powerful</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Cinzel', serif;
+            background: black;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1;
+        }
+        .scene.active {
+            display: flex;
+        }
+        .scene.dark {
+            background: linear-gradient(45deg, #000 0%, #111 50%, #000 100%);
+            animation: lightLeak 10s infinite;
+        }
+        @keyframes lightLeak {
+            0%, 100% { background: linear-gradient(45deg, #000 0%, #111 50%, #000 100%); }
+            50% { background: linear-gradient(45deg, #000 0%, #222 50%, #000 100%); }
+        }
+        .scene.warm {
+            background: linear-gradient(135deg, #87ceeb 0%, #4682b4 50%, #87ceeb 100%);
+            animation: floatMemories 8s infinite ease-in-out;
+        }
+        @keyframes floatMemories {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .scene.personal {
+            background: url('personal_bg.jpg') no-repeat center center;
+            background-size: cover;
+        }
+        .scene.reveal {
+            background: linear-gradient(135deg, #ff69b4 0%, #ffd700 100%);
+            animation: applauseEffect 5s infinite;
+        }
+        @keyframes applauseEffect {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .text-overlay {
+            font-size: 2rem;
+            line-height: 1.5;
+            max-width: 80%;
+            animation: textReveal 3s ease-in-out;
+        }
+        @keyframes textReveal {
+            0% { opacity: 0; transform: translateY(50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .memory-icon {
+            font-size: 4rem;
+            animation: float 4s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .progress-symbol {
+            width: 100px;
+            height: 100px;
+            background: url('progress_symbol.png') no-repeat center;
+            animation: grow 5s ease-in-out;
+        }
+        @keyframes grow {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            animation: fall 3s linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        audio {
+            display: none;
+        }
+        .start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: black;
+            color: white;
+            text-align: center;
+            z-index: 10;
+        }
+        .start-screen.hidden {
+            display: none;
+        }
+        .volume-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            z-index: 20;
+        }
+        .volume-control label {
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+        .volume-control input {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Volume Control -->
+    <div class="volume-control">
+        <label for="volumeSlider">Volume:</label>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
+    </div>
+
+    <!-- Start Screen -->
+    <div id="startScreen" class="start-screen">
+        <div class="text-overlay">
+            Welcome to Aliyah's Birthday Celebration!<br>
+            Click below to start the experience (audio will play).
+        </div>
+        <button onclick="startExperience()">Start Experience</button>
+    </div>
+
+    <audio id="ambientMusic" loop preload="auto">
+        <source src="ambient_music.mp3" type="audio/mpeg">
+        <source src="ambient_music.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="celebrationMusic" preload="auto">
+        <source src="celebration_music.mp3" type="audio/mpeg">
+        <source src="celebration_music.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="applause" preload="auto">
+        <source src="applause.mp3" type="audio/mpeg">
+        <source src="applause.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Scenes -->
+    <div id="scene1" class="scene dark">
+        <div class="text-overlay">
+            In the quiet shadows of time, you've walked paths unseen...<br>
+            Battles fought in silence, lessons etched in your soul.<br>
+            Each year, a layer of strength, a quiet power rising.
+        </div>
+        <button onclick="nextScene()">Continue</button>
+    </div>
+
+    <div id="scene2" class="scene warm">
+        <div class="memory-icon">💫</div>
+        <div class="text-overlay">
+            Now, the light breaks through—golden and warm.<br>
+            Memories float like stars, symbols of progress, of becoming.<br>
+            Confidence blooms, and you stand taller, more yourself.
+        </div>
+        <div class="progress-symbol"></div>
+        <button onclick="nextScene()">Continue</button>
+    </div>
+
+    <div id="scene3" class="scene personal">
+        <div class="text-overlay">
+            Aliyah, you are rare—a light in the ordinary.<br>
+            Loved deeply, cherished beyond words.<br>
+            In your eyes, I see the world anew; in your heart, endless strength.
+        </div>
+        <img src="Photo1.jpg" alt="Personal Memory" style="max-width: 20%; border-radius: 5px;">
+        <button onclick="nextScene()">Continue</button>
+    </div>
+
+    <div id="scene4" class="scene personal">
+        <div class="text-overlay">
+            Happy Birthday, Aliyah.<br>
+            A year older, a year more powerful.<br>
+            This is your moment—a hug from the universe, a standing ovation for your soul.
+        </div>
+        <button onclick="nextScene()">Continue</button>
+    </div>
+
+    <div id="scene5" class="scene reveal">
+        <div class="text-overlay">
+            I have another gift for you<br>
+            My Eponnnnnnnnnnnnn.<br>
+            Come and have it.
+        </div>
+        <img src="Epon.jpg" alt="Gift Image" style="max-width: 20%; border-radius: 10px; margin-top: 20px;">  <!-- Added image here -->
+        <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="confetti" style="left: 20%; animation-delay: 0.5s;"></div>
+        <div class="confetti" style="left: 30%; animation-delay: 1s;"></div>
+        <div class="confetti" style="left: 40%; animation-delay: 1.5s;"></div>
+        <div class="confetti" style="left: 50%; animation-delay: 2s;"></div>
+        <button onclick="restart()">Watch Again</button>
+    </div>
+
+    <script>
+        let currentScene = 0;
+        const totalScenes = 5;
+        const scenes = document.querySelectorAll('.scene');
+        const startScreen = document.getElementById('startScreen');
+        const ambientMusic = document.getElementById('ambientMusic');
+        const celebrationMusic = document.getElementById('celebrationMusic');
+        const applause = document.getElementById('applause');
+        const volumeSlider = document.getElementById('volumeSlider');
+        let audioStarted = false;
+
+        // Set initial volume
+        ambientMusic.volume = volumeSlider.value;
+        celebrationMusic.volume = volumeSlider.value;
+        applause.volume = volumeSlider.value;
+
+        // Volume control
+        volumeSlider.addEventListener('input', function() {
+            ambientMusic.volume = this.value;
+            celebrationMusic.volume = this.value;
+            applause.volume = this.value;
+        });
+
+        function startExperience() {
+            console.log('Starting experience...');
+            startScreen.classList.add('hidden');
+            currentScene = 1;
+            scenes[0].classList.add('active');
+            startAudio();
+        }
+
+        function startAudio() {
+            if (!audioStarted) {
+                ambientMusic.play().then(() => {
+                    console.log('Ambient music started.');
+                }).catch(e => console.error('Ambient music failed:', e));
+                audioStarted = true;
+            }
+        }
+
+        function nextScene() {
+            console.log('Next scene triggered. Current:', currentScene);
+            if (currentScene === 0) return;
+            scenes[currentScene - 1].classList.remove('active');
+            currentScene = (currentScene % totalScenes) + 1;
+            scenes[currentScene - 1].classList.add('active');
+            console.log('Switched to scene:', currentScene);
+
+            if (currentScene === 2) {
+                ambientMusic.pause();
+                celebrationMusic.currentTime = 0;
+                celebrationMusic.play().catch(e => console.error('Celebration music failed:', e));
+            } else if (currentScene === 5) {
+                celebrationMusic.pause();
+                applause.currentTime = 0;
+                applause.play().catch(e => console.error('Applause failed:', e));
+            }
+        }
+
+        function restart() {
+            console.log('Restarting...');
+            currentScene = 1;
+            scenes.forEach(scene => scene.classList.remove('active'));
+            scenes[0].classList.add('active');
+            ambientMusic.currentTime = 0;
+            ambientMusic.play().catch(e => console.error('Restart audio failed:', e));
+        }
+    </script>
+</body>
+</html>
